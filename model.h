@@ -6,7 +6,7 @@
 
 class Model{
 public:
-    Model(const std::string& filename, bool normalize=false);
+    Model(const std::string& filename, bool isKsienrzyc=false);
     Model(const Model& src) = delete;
 
     Model(const std::vector<unsigned short>& indices,

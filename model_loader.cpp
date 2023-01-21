@@ -64,7 +64,7 @@ void load_model(const std::string& filename,
 	// The "scene" pointer will be deleted automatically by "importer"
 }
 
-void normalize_model(std::vector<glm::vec3>& vertices){
+void fix_ksienrzyc_model(std::vector<glm::vec3>& vertices){
 	float min_x = std::numeric_limits<float>::max();
 	float min_y = std::numeric_limits<float>::max();
 	float min_z = std::numeric_limits<float>::max();
@@ -117,9 +117,22 @@ void normalize_model(std::vector<glm::vec3>& vertices){
 	<<"max_z = "<<max_z<<std::endl;
 
 	std::cout<<"s = "<<s<<std::endl;*/
+
+	s/=2;
+
 	for(glm::vec3 & vertex: vertices){
 
+		vertex.z -= d/2;
+
 		vertex /= s;
+
+		float t = vertex.y;
+		vertex.y = vertex.z;
+		vertex.z = t;
+
+		t = vertex.x;
+		vertex.x = vertex.z;
+		vertex.z = t;
 	}
 }
 

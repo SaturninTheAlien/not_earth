@@ -4,7 +4,7 @@
 #include "model_loader.h"
 
 
-Model::Model(const std::string& filename, bool normalize){
+Model::Model(const std::string& filename, bool isKsienrzyc){
     std::vector<unsigned short> indices;
     std::vector<glm::vec3> indexed_vertices; 
     std::vector<glm::vec2> indexed_uvs;
@@ -16,8 +16,8 @@ Model::Model(const std::string& filename, bool normalize){
     indexed_uvs,
     indexed_normals);
 
-    if(normalize){
-        normalize_model(indexed_vertices);
+    if(isKsienrzyc){
+        fix_ksienrzyc_model(indexed_vertices);
     }
 
     createBuffers(indices, indexed_vertices, indexed_uvs, indexed_normals);
