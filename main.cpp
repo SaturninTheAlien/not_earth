@@ -49,7 +49,7 @@ int main(int argc, char**argv){
     );
     M = glm::mat4(1.0f);
 
-    glm::vec3 light_dir = glm::vec3(-100.f, 10.f, 100.f);
+    glm::vec3 lightPosition = glm::vec3(100.f, 10.f, 100.f);
 
     Sphere sphere;
 
@@ -57,9 +57,12 @@ int main(int argc, char**argv){
     std::vector<Object3D*> objects3D;
 
     Moon moon(sphere);
+    Earth earth(sphere);
+
     Ksienrzyc ksienrzyc;
     
     objects3D.push_back(&moon);
+    objects3D.push_back(&earth);
     objects3D.push_back(&ksienrzyc);
 
     int selected_object_id = 0;
@@ -102,10 +105,19 @@ int main(int argc, char**argv){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
 
+        if(currentKeyStates[SDL_SCANCODE_L]){
+            glm::mat4 RM = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+            glm::vec4 v = glm::vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1);
+            v = RM * v;
+
+            lightPosition = glm::vec3(v.x, v.y, v.z);            
+        }
+
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-        objects3D[selected_object_id]->render(M,V,P, light_dir);
+        objects3D[selected_object_id]->render(M,V,P, lightPosition);
         //moon.render(M, V, P, light_dir);
         //ksienrzyc.render(M, V, P, light_dir);
 

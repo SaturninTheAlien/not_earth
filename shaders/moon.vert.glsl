@@ -22,6 +22,10 @@ void main() {
 
     vec3 v3 = v.xyz / v.w;
     fLightDir = normalize(lightPosition - v3);
+
+    /*vec4 v4 = lightPosition - v;
+    fLightDir = normalize(v4.xyz / v4.w);*/
+    
     
     gl_Position = P * v;
     fUV = vertex_uv;

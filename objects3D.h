@@ -12,7 +12,7 @@ public:
         const glm::mat4& P,
         const glm::mat4& V,
         const glm::mat4& M,
-        const glm::vec3& light_dir
+        const glm::vec3& lightPosition
         )const = 0;
 };
 
@@ -24,19 +24,50 @@ public:
         const glm::mat4& P,
         const glm::mat4& V,
         const glm::mat4& M,
-        const glm::vec3& light_dir
+        const glm::vec3& lightPosition
         )const;
 private:
     const Model & sphere_model;
     unsigned int texture = 0;
-    unsigned int texture_normal = 1;
+    unsigned int texture_normal = 0;
     int shader=0;
+    int shader_light_position_id = -1;
     int shader_M_id=-1;
     int shader_V_id=-1;
     int shader_P_id=-1;
     int shader_image_id=-1;
     int shader_image_normal_id=-1;
 };
+
+
+class Earth: public Object3D{
+public:
+    Earth(const Model& sphere_model);
+
+    void render(
+        const glm::mat4& P,
+        const glm::mat4& V,
+        const glm::mat4& M,
+        const glm::vec3& lightPosition
+        )const;
+protected:
+    const Model & sphere_model;
+    unsigned int texture = 0;
+    unsigned int texture_normal = 0;
+    unsigned int texture_night = 0;
+    unsigned int texture_spec = 0;
+    int shader=0;
+    int shader_light_position_id = -1;
+    int shader_M_id=-1;
+    int shader_V_id=-1;
+    int shader_P_id=-1;
+    int shader_image_id=-1;
+    int shader_image_night_id=-1;
+    int shader_image_spec_id=-1;
+    int shader_image_normal_id=-1;
+    int shader_light_dir_id = -1;
+};
+
 
 class Ksienrzyc: public Object3D{
 public:
@@ -45,7 +76,7 @@ public:
         const glm::mat4& P,
         const glm::mat4& V,
         const glm::mat4& M,
-        const glm::vec3& light_dir
+        const glm::vec3& lightPosition
         )const;
 
 private:
