@@ -51,7 +51,11 @@ int main(int argc, char**argv){
 
     glm::vec3 light_dir = glm::vec3(-100.f, 10.f, 100.f);
 
-    Ksienrzyc ksienrzyc;    
+    Sphere sphere;
+
+
+    Moon moon(sphere);
+    Ksienrzyc ksienrzyc;
 
     SDL_ShowWindow(window);
     bool quit = false;
@@ -91,7 +95,8 @@ int main(int argc, char**argv){
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-        ksienrzyc.render(M, V, P, light_dir);
+        moon.render(M, V, P, light_dir);
+        //ksienrzyc.render(M, V, P, light_dir);
 
         SDL_GL_SwapWindow(window);
     }

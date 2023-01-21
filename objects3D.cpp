@@ -1,10 +1,10 @@
-#include "objects.h"
+#include "objects3D.h"
 #include <GL/glew.h>
 
 Moon::Moon(const Model& sphere_model):
 sphere_model(sphere_model){
 
-    this->texture = loadTextureSDL("textures/moon.png");
+    this->texture = loadTextureSDL("textures/moon.jpg");
     this->texture_normal = loadTextureSDL("textures/moon_normal.jpg");
 
     this->shader = compileShader(readFile("shaders/moon.vert.glsl"),

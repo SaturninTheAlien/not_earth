@@ -32,5 +32,7 @@ unsigned int loadTextureSDL(const std::string& filename){
 
     SDL_FreeSurface(surface);
 
+    glBindTexture(GL_TEXTURE_2D, 0);
+
     return TextureID;
 }
