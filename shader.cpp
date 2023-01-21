@@ -1,4 +1,5 @@
 #include "shader.h"
+#include "utils.h"
 
 #include <string>
 #include <sstream>
@@ -64,4 +65,19 @@ int getUniformID(int shader, const std::string& name){
     }
 
     return uniform_id;
+}
+
+SimpleTextureShader::SimpleTextureShader(){
+    this->programID = compileShader(readFile("shaders/simple_texture.vert.glsl"), readFile("shaders/simple_texture.frag.glsl"));
+    this->mvp_id = getUniformID(this->programID, "MVP");
+    this->image_id = getUniformID(this->programID, "image");
+}
+
+void SimpleTextureShader::use(glm::mat4 MVP, int texture_id)const{
+    glUseProgram(this->programID);
+    
+    glUniformMatrix4fv(this->mvp_id, 1, GL_FALSE, &MVP[0][0]);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    glUniform1i(this->image_id, 0);
 }

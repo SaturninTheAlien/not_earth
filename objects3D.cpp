@@ -93,24 +93,31 @@ void Earth::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, c
     this->sphere_model.draw();
 }
 
-Ksienrzyc::Ksienrzyc():
+Ksienrzyc::Ksienrzyc(const SimpleTextureShader&shader): shader(shader),
 model("models/ksienrzyc.obj", true){
 
     this->texture = load_texture("models/ksienrzyc.png");
-    this->shader = compileShader(readFile("shaders/simple_texture.vert.glsl"), readFile("shaders/simple_texture.frag.glsl"));
+    /*this->shader = compileShader(readFile("shaders/simple_texture.vert.glsl"), readFile("shaders/simple_texture.frag.glsl"));
     this->shader_mvp_id = getUniformID(shader, "MVP");
-    this->shader_texture_id = getUniformID(shader, "image");
+    this->shader_texture_id = getUniformID(shader, "image");*/
 }
 
 void Ksienrzyc::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::vec3& lightPosition)const{
-    glUseProgram(this->shader);
+    glm::mat4 MVP = P * V * M;
+
+    this->shader.use(MVP, this->texture);
+    this->model.draw();
+}
+
+Sun::Sun(const Model & sphere_model, const SimpleTextureShader&shader):
+sphere_model(sphere_model), shader(shader){
+    texture = load_texture("textures/2k_sun.jpg");
+}
+
+void Sun::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::vec3& lightPosition)const{
 
     glm::mat4 MVP = P * V * M;
-    glUniformMatrix4fv(this->shader_mvp_id, 1, GL_FALSE, &MVP[0][0]);
 
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, this->texture);
-    glUniform1i(this->shader_texture_id, 0);
-
-    this->model.draw();
+    this->shader.use(MVP, this->texture);
+    this->sphere_model.draw();
 }

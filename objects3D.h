@@ -5,13 +5,14 @@
 #include "texture.h"
 #include "utils.h"
 
+
 class Object3D{
 public:
     virtual ~Object3D(){}
     virtual void render(
-        const glm::mat4& P,
-        const glm::mat4& V,
         const glm::mat4& M,
+        const glm::mat4& V,
+        const glm::mat4& P,
         const glm::vec3& lightPosition
         )const = 0;
 };
@@ -21,9 +22,9 @@ public:
     Moon(const Model& sphere_model);
 
     void render(
-        const glm::mat4& P,
-        const glm::mat4& V,
         const glm::mat4& M,
+        const glm::mat4& V,
+        const glm::mat4& P,
         const glm::vec3& lightPosition
         )const;
 private:
@@ -45,9 +46,9 @@ public:
     Earth(const Model& sphere_model);
 
     void render(
-        const glm::mat4& P,
-        const glm::mat4& V,
         const glm::mat4& M,
+        const glm::mat4& V,
+        const glm::mat4& P,
         const glm::vec3& lightPosition
         )const;
 protected:
@@ -71,18 +72,34 @@ protected:
 
 class Ksienrzyc: public Object3D{
 public:
-    Ksienrzyc();
+    Ksienrzyc(const SimpleTextureShader&shader);
     void render(
-        const glm::mat4& P,
-        const glm::mat4& V,
         const glm::mat4& M,
+        const glm::mat4& V,
+        const glm::mat4& P,
         const glm::vec3& lightPosition
         )const;
 
 private:
     Model model;
     unsigned int texture;
-    int shader=0;
-    int shader_mvp_id=-1;
-    int shader_texture_id=-1;
+
+    const SimpleTextureShader&shader;
+};
+
+class Sun: public Object3D{
+public:
+    Sun(const Model & sphere_model, const SimpleTextureShader&shader);
+    void render(
+        const glm::mat4& M,
+        const glm::mat4& V,
+        const glm::mat4& P,
+        const glm::vec3& lightPosition
+        )const;
+
+private:
+
+    unsigned int texture;
+    const Model & sphere_model;
+    const SimpleTextureShader&shader;
 };

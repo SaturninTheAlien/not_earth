@@ -52,17 +52,19 @@ int main(int argc, char**argv){
     glm::vec3 lightPosition = glm::vec3(100.f, 10.f, 100.f);
 
     Sphere sphere;
-
+    SimpleTextureShader simpleTextureShader;
 
     std::vector<Object3D*> objects3D;
 
     Moon moon(sphere);
     Earth earth(sphere);
 
-    Ksienrzyc ksienrzyc;
+    Sun sun(sphere, simpleTextureShader);
+    Ksienrzyc ksienrzyc(simpleTextureShader);
     
     objects3D.push_back(&moon);
     objects3D.push_back(&earth);
+    objects3D.push_back(&sun);
     objects3D.push_back(&ksienrzyc);
 
     int selected_object_id = 0;
