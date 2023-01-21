@@ -8,7 +8,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
-unsigned int loadTextureSDL(const std::string& filename){
+unsigned int load_texture(const std::string& filename){
 
     SDL_Surface * surface = IMG_Load(filename.c_str());
     if(surface==nullptr){

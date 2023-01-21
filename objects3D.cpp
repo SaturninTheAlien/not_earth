@@ -4,8 +4,8 @@
 Moon::Moon(const Model& sphere_model):
 sphere_model(sphere_model){
 
-    this->texture = loadTextureSDL("textures/moon.jpg");
-    this->texture_normal = loadTextureSDL("textures/moon_normal.jpg");
+    this->texture = load_texture("textures/moon.jpg");
+    this->texture_normal = load_texture("textures/moon_normal.jpg");
 
     this->shader = compileShader(readFile("shaders/moon.vert.glsl"),
     readFile("shaders/moon.frag.glsl"));
@@ -41,7 +41,7 @@ void Moon::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, co
 Ksienrzyc::Ksienrzyc():
 model("models/ksienrzyc.obj", true){
 
-    this->texture = loadTextureSDL("models/ksienrzyc.png");
+    this->texture = load_texture("models/ksienrzyc.png");
     this->shader = compileShader(readFile("shaders/simple_texture.vert.glsl"), readFile("shaders/simple_texture.frag.glsl"));
     this->shader_mvp_id = getUniformID(shader, "MVP");
     this->shader_texture_id = getUniformID(shader, "image");

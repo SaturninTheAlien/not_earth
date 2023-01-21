@@ -2,4 +2,4 @@
 
 #include <string>
 
-unsigned int loadTextureSDL(const std::string& filename);
+unsigned int load_texture(const std::string& filename);

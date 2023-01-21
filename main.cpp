@@ -5,7 +5,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "objects.h"
+#include "objects3D.h"
 
 
 int main(int argc, char**argv){
@@ -54,8 +54,15 @@ int main(int argc, char**argv){
     Sphere sphere;
 
 
+    std::vector<Object3D*> objects3D;
+
     Moon moon(sphere);
     Ksienrzyc ksienrzyc;
+    
+    objects3D.push_back(&moon);
+    objects3D.push_back(&ksienrzyc);
+
+    int selected_object_id = 0;
 
     SDL_ShowWindow(window);
     bool quit = false;
@@ -73,6 +80,9 @@ int main(int argc, char**argv){
                 else if (event.key.keysym.sym == SDLK_z){
 					M = glm::mat4(1.0f);
 				}
+                else if(event.key.keysym.sym == SDLK_o){
+                    selected_object_id = (selected_object_id + 1) % objects3D.size();
+                }
             }
         }
 
@@ -95,7 +105,8 @@ int main(int argc, char**argv){
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-        moon.render(M, V, P, light_dir);
+        objects3D[selected_object_id]->render(M,V,P, light_dir);
+        //moon.render(M, V, P, light_dir);
         //ksienrzyc.render(M, V, P, light_dir);
 
         SDL_GL_SwapWindow(window);
