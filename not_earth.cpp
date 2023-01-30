@@ -35,7 +35,7 @@ protected:
     glm::mat4 mune_matrix = glm::mat4(1.0f);
 
 
-    glm::vec3 lightPosition = glm::vec3(0.f, 0.f, 0.f);
+    glm::vec3 lightPosition = glm::vec3(110.f, 0.f, 0.0f);
 
     
     double earth_orbit_radius = 5;
@@ -89,7 +89,7 @@ void NotSolarSystemApp::update(){
 
     //glm::mat4 moon_orbital = this->moon_rotation;
 
-    glm::mat4 moon_orbital = glm::rotate(glm::mat4(1.0f), float(glm::radians(25./*5.145396*/)), glm::vec3(1.f, 0.f, 0.f)) * this->moon_rotation;
+    glm::mat4 moon_orbital = glm::rotate(glm::mat4(1.0f), float(glm::radians(5.145396)), glm::vec3(1.f, 0.f, 0.f)) * this->moon_rotation;
     moon_orbital = glm::translate(moon_orbital, glm::vec3(-this->moon_orbit_radius, 0.f, 0.0f));
 
     moon_orbital = earth_orbital * moon_orbital;
@@ -199,18 +199,18 @@ int main(int argc, char**argv){
 
         const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
 	    if (currentKeyStates[SDL_SCANCODE_RIGHT]){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
         else if(currentKeyStates[SDL_SCANCODE_LEFT]){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
-        }
-
-        if(currentKeyStates[SDL_SCANCODE_UP]){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
 
+        if(currentKeyStates[SDL_SCANCODE_UP]){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
+        }
+
         else if(currentKeyStates[SDL_SCANCODE_DOWN]){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
         }
 
         /*if(currentKeyStates[SDL_SCANCODE_L]){
