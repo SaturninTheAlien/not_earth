@@ -14,8 +14,9 @@
 
 namespace py = pybind11;
 
+
+double dt = 1./8;
 glm::mat4 M;
-int selected_object_id = 1;
 NotSolarSystem * ns;
 
 
@@ -26,13 +27,19 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         else if(key == GLFW_KEY_Z){
             M = glm::mat4(1.0f);
+            dt = 1./8;
+        }
+        else if(key == GLFW_KEY_W){
+            dt *= 2;
+        }
+        else if(key == GLFW_KEY_S){
+            dt /= 2;
         }
         else if(key == GLFW_KEY_O){
-            selected_object_id = (selected_object_id + 1) % ns->objects3D.size();
+            ns->xD();
         }
     }
 }
-
 int main(int argc, char**argv){
 
     py::scoped_interpreter guard{};
@@ -55,14 +62,13 @@ int main(int argc, char**argv){
 		throw std::runtime_error("Failed to initialize GLEW\n");
 	}
    
-    //glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
-
     if(!GLEW_VERSION_3_3){
         std::ostringstream os;
         os<<"Modern opengl not supported!"<<std::endl;
         os<<"Please install some drivers or don't use an antique computer!"<<std::endl;
         throw std::runtime_error(os.str());
     }
+
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -73,51 +79,42 @@ int main(int argc, char**argv){
 
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
-        glm::vec3(4,0,0), // Camera is at (4,3,3), in World Space
+        glm::vec3(0,0,20), // Camera is at (4,3,3), in World Space
         glm::vec3(0,0,0), // and looks at the origin
         glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
     M = glm::mat4(1.0f);
 
-    glm::vec3 lightPosition = glm::vec3(100.f, 10.f, 100.f);
     ns = new NotSolarSystem();
 
     glfwSetKeyCallback(window, key_callback);
 
     while(glfwWindowShouldClose(window) == 0 ){
-
-        glfwPollEvents();		
-
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
-        }
-        else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+        glfwPollEvents();
+	    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
-
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
-        }
         else if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
 
-        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
-            glm::mat4 RM = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-            glm::vec4 v = glm::vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1);
-            v = RM * v;
-
-            lightPosition = glm::vec3(v.x, v.y, v.z);            
+        if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
         }
+
+        else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
+        }
+
+        ns->update(dt);
 
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-		ns->objects3D[selected_object_id]->render(M,V,P, lightPosition);
-		
+        ns->render(M,V,P);
+
 		glfwSwapBuffers(window);
-	}
+    }
 
     delete ns;
 
