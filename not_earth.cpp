@@ -1,11 +1,15 @@
 #include <iostream>
 #include <GL/glew.h>
-#include <SDL2/SDL.h>
+#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <pybind11/embed.h>
+
 #include "objects3D.h"
+
+namespace py = pybind11;
 
 class NotSolarSystemApp{
 public:
@@ -120,27 +124,58 @@ void NotSolarSystemApp::render(
     }
 }
 
-int main(int argc, char**argv){
+NotSolarSystemApp * app = nullptr;
+glm::mat4 M;
 
-    SDL_Window * window = SDL_CreateWindow("Not Earth",0,0,1280,800, SDL_WINDOW_OPENGL|SDL_WINDOW_HIDDEN);
-    SDL_GLContext glContext = SDL_GL_CreateContext(window);
-    {
-        GLenum errorCode = glewInit();
-        if(errorCode!=GLEW_OK){
-            std::cerr<<"[GLEW error]"<<glewGetErrorString(errorCode)<<std::endl;
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if(action == GLFW_PRESS){
+        if(key == GLFW_KEY_ESCAPE){
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+        else if(key == GLFW_KEY_Z){
+            M = glm::mat4(1.0f);
+            app->omega0 = 0.025;
+            app->muneInsteadOfTheMoon = false;
+        }
+        else if(key == GLFW_KEY_W){
+            app->omega0 *= 2;
+        }
+        else if(key == GLFW_KEY_S){
+            app->omega0 /= 2;
+        }
+        else if(key == GLFW_KEY_M){
+            app->muneInsteadOfTheMoon = !app->muneInsteadOfTheMoon;
         }
     }
+}
 
-	// Initialize GLEW
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		return -1;
+int main(int argc, char**argv){
+
+    py::scoped_interpreter guard{};
+
+    if( !glfwInit() ){
+        throw std::runtime_error("Failed to initialize GLFW\n");
 	}
 
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+	GLFWwindow* window = glfwCreateWindow( 1280, 800, "Not Earth!", 0, 0);
+
+    glfwMakeContextCurrent(window);
+
+	if (glewInit() != GLEW_OK) {
+		throw std::runtime_error("Failed to initialize GLEW\n");
+	}
+   
     if(!GLEW_VERSION_3_3){
-        std::cerr<<"Modern opengl not supported!"<<std::endl;
-        std::cerr<<"Please install some drivers!"<<std::endl;
-        return 1;
+        std::ostringstream os;
+        os<<"Modern opengl not supported!"<<std::endl;
+        os<<"Please install some drivers or don't use an antique computer!"<<std::endl;
+        throw std::runtime_error(os.str());
     }
 
 
@@ -149,9 +184,7 @@ int main(int argc, char**argv){
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    int selected_model = 0;
-
-    glm::mat4 M, V, P;
+    glm::mat4 V, P;
 
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
@@ -161,77 +194,40 @@ int main(int argc, char**argv){
     );
     M = glm::mat4(1.0f);
 
-    //glm::vec3 lightPosition = glm::vec3(100.f, 10.f, 100.f);
+    app = new NotSolarSystemApp();
 
-    NotSolarSystemApp notSolarSystemApp;
-
-
-    SDL_ShowWindow(window);
-    bool quit = false;
-    while(!quit){
-        SDL_Event event;
-        while(SDL_PollEvent(&event)){
-            if(event.type==SDL_QUIT){
-                quit = true;
-            }
-
-            else if(event.type == SDL_KEYDOWN && event.key.repeat == 0){
-                if (event.key.keysym.sym == SDLK_ESCAPE){
-					quit = true;
-				}
-                else if (event.key.keysym.sym == SDLK_z){
-					M = glm::mat4(1.0f);
-                    notSolarSystemApp.omega0 = 0.025;
-                    notSolarSystemApp.muneInsteadOfTheMoon = false;
-				}
-                else if(event.key.keysym.sym == SDLK_w){
-                    notSolarSystemApp.omega0 *= 2;
-                }
-                else if(event.key.keysym.sym == SDLK_s){
-                    notSolarSystemApp.omega0 /= 2;
-                }
-                else if(event.key.keysym.sym == SDLK_m){
-                    notSolarSystemApp.muneInsteadOfTheMoon = !notSolarSystemApp.muneInsteadOfTheMoon;
-                }
-
-            }
-        }
-
-        const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-	    if (currentKeyStates[SDL_SCANCODE_RIGHT]){
+    glfwSetKeyCallback(window, key_callback);
+    
+    while(glfwWindowShouldClose(window) == 0 ){
+        glfwPollEvents();
+	    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
-        else if(currentKeyStates[SDL_SCANCODE_LEFT]){
+        else if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
 
-        if(currentKeyStates[SDL_SCANCODE_UP]){
+        if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
         }
 
-        else if(currentKeyStates[SDL_SCANCODE_DOWN]){
+        else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
         }
 
-        /*if(currentKeyStates[SDL_SCANCODE_L]){
-            glm::mat4 RM = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-
-            glm::vec4 v = glm::vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1);
-            v = RM * v;
-
-            lightPosition = glm::vec3(v.x, v.y, v.z);            
-        }*/
+        app->update();
 
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-        notSolarSystemApp.update();
-        notSolarSystemApp.render(M,V,P);
-        
-        //notSolarSystemApp.objects[selected_object_id]->render(M,V,P, lightPosition);
+        app->render(M,V,P);
 
-        SDL_GL_SwapWindow(window);
+		glfwSwapBuffers(window);
     }
+
+    delete app;
+
+    glfwTerminate();
 
     return 0;
 }

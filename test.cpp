@@ -2,11 +2,7 @@
 #include <sstream>
 #include <stdexcept>
 
-
-// Include GLEW
 #include <GL/glew.h>
-
-// Include GLFW
 #include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
@@ -17,6 +13,24 @@
 #include "objects3D.h"
 
 namespace py = pybind11;
+
+glm::mat4 M;
+int selected_object_id = 1;
+std::vector<Object3D*> objects3D;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if(action == GLFW_PRESS){
+        if(key == GLFW_KEY_ESCAPE){
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+        else if(key == GLFW_KEY_Z){
+            M = glm::mat4(1.0f);
+        }
+        else if(key == GLFW_KEY_O){
+            selected_object_id = (selected_object_id + 1) % objects3D.size();
+        }
+    }
+}
 
 int main(int argc, char**argv){
 
@@ -39,8 +53,8 @@ int main(int argc, char**argv){
 	if (glewInit() != GLEW_OK) {
 		throw std::runtime_error("Failed to initialize GLEW\n");
 	}
-
-    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+   
+    //glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
     if(!GLEW_VERSION_3_3){
         std::ostringstream os;
@@ -54,9 +68,7 @@ int main(int argc, char**argv){
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    int selected_model = 0;
-
-    glm::mat4 M, V, P;
+    glm::mat4 V, P;
 
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
@@ -70,9 +82,6 @@ int main(int argc, char**argv){
 
     Sphere sphere;
     SimpleTextureShader simpleTextureShader;
-
-    std::vector<Object3D*> objects3D;
-
     Moon moon(sphere);
     Earth earth(sphere);
 
@@ -84,63 +93,27 @@ int main(int argc, char**argv){
     objects3D.push_back(&sun);
     objects3D.push_back(&ksienrzyc);
 
-    int selected_object_id = 1;
+    glfwSetKeyCallback(window, key_callback);
 
-    do{
-		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
-		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        glClearColor(0,0,0.25, 1);
+    while(glfwWindowShouldClose(window) == 0 ){
 
-		objects3D[selected_object_id]->render(M,V,P, lightPosition);
+        glfwPollEvents();		
 
-		
-		// Swap buffers
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-
-	} // Check if the ESC key was pressed or the window was closed
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-		   glfwWindowShouldClose(window) == 0 );
-
-    /*SDL_ShowWindow(window);
-    bool quit = false;
-    while(!quit){
-        SDL_Event event;
-        while(SDL_PollEvent(&event)){
-            if(event.type==SDL_QUIT){
-                quit = true;
-            }
-
-            else if(event.type == SDL_KEYDOWN && event.key.repeat == 0){
-                if (event.key.keysym.sym == SDLK_ESCAPE){
-					quit = true;
-				}
-                else if (event.key.keysym.sym == SDLK_z){
-					M = glm::mat4(1.0f);
-				}
-                else if(event.key.keysym.sym == SDLK_o){
-                    selected_object_id = (selected_object_id + 1) % objects3D.size();
-                }
-            }
-        }
-
-        const Uint8* currentKeyStates = SDL_GetKeyboardState(NULL);
-	    if (currentKeyStates[SDL_SCANCODE_RIGHT]){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
-        }
-        else if(currentKeyStates[SDL_SCANCODE_LEFT]){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
-        }
-
-        if(currentKeyStates[SDL_SCANCODE_UP]){
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
-
-        else if(currentKeyStates[SDL_SCANCODE_DOWN]){
+        else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
         }
 
-        if(currentKeyStates[SDL_SCANCODE_L]){
+        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
+        }
+        else if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
+        }
+
+        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
             glm::mat4 RM = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
             glm::vec4 v = glm::vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1);
@@ -152,12 +125,12 @@ int main(int argc, char**argv){
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-        objects3D[selected_object_id]->render(M,V,P, lightPosition);
-        //moon.render(M, V, P, light_dir);
-        //ksienrzyc.render(M, V, P, light_dir);
+		objects3D[selected_object_id]->render(M,V,P, lightPosition);
+		
+		glfwSwapBuffers(window);
+		
 
-        SDL_GL_SwapWindow(window);
-    }*/
+	}
 
     glfwTerminate();
 
