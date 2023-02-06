@@ -1,12 +1,12 @@
 
 UNAME_S := $(shell uname -s)
 ifeq ($(UNAME_S),Darwin)
-	CFLAGS = -std=c++17 -I/opt/homebrew/include `python3-config --include`
-	LDFLAGS = -L/opt/homebrew/lib -lglfw -lGLEW -lassimp `python3-config --ldflags --embed` -framework OpenGL
+	CFLAGS = -std=c++17 -I/opt/homebrew/include $(shell python3-config --include)
+	LDFLAGS = -L/opt/homebrew/lib -lglfw -lGLEW -lassimp $(shell python3-config --ldflags --embed) -framework OpenGL
 
 else
-	CFLAGS = -std=c++17 `python3-config --include`
-	LDFLAGS = -lglfw -lGLEW -lassimp `python3-config --ldflags --embed` -lGL
+	CFLAGS = -std=c++17 $(shell python3-config --include)
+	LDFLAGS = -lglfw -lGLEW -lassimp $(shell python3-config --ldflags --embed) -lGL
 
 endif
 
