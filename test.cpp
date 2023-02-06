@@ -1,36 +1,53 @@
 #include <iostream>
+#include <sstream>
+#include <stdexcept>
+
+
+// Include GLEW
 #include <GL/glew.h>
-#include <SDL2/SDL.h>
+
+// Include GLFW
+#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include <pybind11/embed.h>
+
 #include "objects3D.h"
 
+namespace py = pybind11;
 
 int main(int argc, char**argv){
 
-    SDL_Window * window = SDL_CreateWindow("Not Earth",0,0,1280,800, SDL_WINDOW_OPENGL|SDL_WINDOW_HIDDEN);
-    SDL_GLContext glContext = SDL_GL_CreateContext(window);
-    {
-        GLenum errorCode = glewInit();
-        if(errorCode!=GLEW_OK){
-            std::cerr<<"[GLEW error]"<<glewGetErrorString(errorCode)<<std::endl;
-        }
-    }
+    py::scoped_interpreter guard{};
 
-	// Initialize GLEW
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-		return -1;
+    if( !glfwInit() ){
+        throw std::runtime_error("Failed to initialize GLFW\n");
 	}
 
-    if(!GLEW_VERSION_3_3){
-        std::cerr<<"Modern opengl not supported!"<<std::endl;
-        std::cerr<<"Please install some drivers!"<<std::endl;
-        return 1;
-    }
+	glfwWindowHint(GLFW_SAMPLES, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // To make MacOS happy; should not be needed
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	GLFWwindow* window = glfwCreateWindow( 1280, 800, "Not Earth!", 0, 0);
+
+    glfwMakeContextCurrent(window);
+
+	if (glewInit() != GLEW_OK) {
+		throw std::runtime_error("Failed to initialize GLEW\n");
+	}
+
+    glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+
+    if(!GLEW_VERSION_3_3){
+        std::ostringstream os;
+        os<<"Modern opengl not supported!"<<std::endl;
+        os<<"Please install some drivers or don't use an antique computer!"<<std::endl;
+        throw std::runtime_error(os.str());
+    }
 
     glEnable(GL_TEXTURE_2D);
     glEnable (GL_DEPTH_TEST);
@@ -67,9 +84,25 @@ int main(int argc, char**argv){
     objects3D.push_back(&sun);
     objects3D.push_back(&ksienrzyc);
 
-    int selected_object_id = 0;
+    int selected_object_id = 1;
 
-    SDL_ShowWindow(window);
+    do{
+		// Clear the screen. It's not mentioned before Tutorial 02, but it can cause flickering, so it's there nonetheless.
+		glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0,0,0.25, 1);
+
+		objects3D[selected_object_id]->render(M,V,P, lightPosition);
+
+		
+		// Swap buffers
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+
+	} // Check if the ESC key was pressed or the window was closed
+	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
+		   glfwWindowShouldClose(window) == 0 );
+
+    /*SDL_ShowWindow(window);
     bool quit = false;
     while(!quit){
         SDL_Event event;
@@ -124,7 +157,9 @@ int main(int argc, char**argv){
         //ksienrzyc.render(M, V, P, light_dir);
 
         SDL_GL_SwapWindow(window);
-    }
+    }*/
+
+    glfwTerminate();
 
     return 0;
 }
