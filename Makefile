@@ -10,7 +10,7 @@ else
 
 endif
 
-common_objects = utils.o shader.o model.o model_loader.o texture.o objects3D.o not_solar_system.o
+common_objects = utils.o shader.o model.o model_loader.o texture.o objects3D.o not_solar_system.o controls.o
 headers1 = utils.h shader.h model.h model_loader.h texture.h
 
 all: $(common_objects) main.o
@@ -24,6 +24,9 @@ main.o: main.cpp *.h
 
 test.o: test.cpp *.h
 	c++ $(CFLAGS) test.cpp -c -o test.o
+
+controls.o: controls.cpp controls.h
+	c++ $(CFLAGS) controls.cpp -c -o controls.o
 
 utils.o: utils.h utils.cpp
 	c++ $(CFLAGS) utils.cpp -c -o utils.o

@@ -1,20 +1,22 @@
 #include "controls.h"
+#include "math.h"
 
-#include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 
-void computeMatricesFromInputs(glm::mat4& P, glm::mat4& V, float speed, float mouseSpeed){
+void computeMatricesFromInputs(GLFWwindow* window, glm::vec3&position, glm::mat4& P, glm::mat4& V, float speed, float mouseSpeed){
 
 	// Get mouse position
 	double xpos=0, ypos=0;
 	glfwGetCursorPos(window, &xpos, &ypos);
 
 	// Reset mouse position for next frame
-	glfwSetCursorPos(window, 1024/2, 768/2);
+	glfwSetCursorPos(window, 1280/2, 800/2);
 
 	// Compute new orientation
-	horizontalAngle += mouseSpeed * float(1024/2 - xpos );
-	verticalAngle   += mouseSpeed * float( 768/2 - ypos );
+	static float horizontalAngle = 0;
+	static float verticalAngle = 0;
+	horizontalAngle += mouseSpeed * float(1280/2 - xpos );
+	verticalAngle   += mouseSpeed * float( 800/2 - ypos );
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
 	glm::vec3 direction(
@@ -50,7 +52,7 @@ void computeMatricesFromInputs(glm::mat4& P, glm::mat4& V, float speed, float mo
 		position -= right * speed;
 	}
 
-	float FoV = initialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
+	float FoV = 0;
 
 	P = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 100.0f);
 	V = glm::lookAt(
