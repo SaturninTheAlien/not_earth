@@ -6,6 +6,8 @@
 #include "objects3D.h"
 
 
+
+
 class NotPlanet{
 public:
     NotPlanet(Object3D* object3D, double self_omega, double orbital_radius, double orbital_omega, double self_radius=1):
@@ -13,15 +15,11 @@ public:
 
     }
 
-    void render(
-        const glm::mat4& M,
-        const glm::mat4& V,
-        const glm::mat4& P)const{
-
-        this->object3D->render(M * this->matrix, V, P,this->matrix * this->light_matrix);
+    void render(const glm::mat4& MVP)const{
+        this->object3D->render(MVP * this->matrix, this->matrix, glm::vec3(0.f,0.f,0.f));
     }
+    void update(double dt);
 
-    void updateRecursive(double dt, const glm::mat4& parent_orbital_matrix=glm::mat4(1.f));
     std::vector<NotPlanet*>satellites;
     double self_phi = M_PI;
     double self_omega = 0;
@@ -37,7 +35,8 @@ public:
 
 private:
     glm::mat4 matrix;
-    glm::mat4 light_matrix = glm::mat4(1.f);
+    glm::mat4 orbital_matrix = glm::mat4(1.f);
+    
     Object3D* object3D;
     friend class NotSolarSystem;
 };
@@ -58,10 +57,7 @@ public:
 
     void update(double dt);
 
-    void render(
-        const glm::mat4& M,
-        const glm::mat4& V,
-        const glm::mat4& P)const;
+    void render(const glm::mat4& MVP)const;
 
     void xD();
 

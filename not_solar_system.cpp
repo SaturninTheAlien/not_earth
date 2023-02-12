@@ -4,10 +4,10 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 
-void NotPlanet::updateRecursive(double dt, const glm::mat4& parent_orbital_matrix){
+void NotPlanet::update(double dt){
 
-    glm::mat4 rotation_matrix = glm::mat4(1.f);
-
+    glm::mat4 rotation_matrix = glm::rotate(glm::mat4(1.f), float(this->self_phi), glm::vec3(0.f,1.f,0.f));
+    
     this->self_phi += this->self_omega * dt;
     if(this->self_phi > 2*M_PI){
         this->self_phi -= 2*M_PI;
@@ -16,38 +16,27 @@ void NotPlanet::updateRecursive(double dt, const glm::mat4& parent_orbital_matri
         this->self_phi += 2*M_PI;
     }
 
-    rotation_matrix = glm::rotate(rotation_matrix, float(this->self_phi), glm::vec3(0.f,1.f,0.f));
-
-    glm::mat4 orbital_matrix = glm::mat4(1.f);
-
-    if(this->orbital_radius>0){
-        this->orbital_phi -= this->orbital_omega * dt;
-        
-        if(this->orbital_phi > 2*M_PI){
-            this->orbital_phi -= 2*M_PI;
-        }
-        else if(this->orbital_phi < 0){
-            this->orbital_phi += 2*M_PI;
-        }
-
-        orbital_matrix = glm::translate(orbital_matrix,
-            glm::vec3(this->orbital_radius * cos(this->orbital_phi),
-            0.f,
-            this->orbital_radius * sin(this->orbital_phi)));
-          
-        orbital_matrix = parent_orbital_matrix * orbital_matrix;
-
-        this->light_matrix = glm::rotate(glm::mat4(1.0f), float(this->orbital_phi), glm::vec3(0.0f, 1.0f, 0.0f));  
-    }
-
     for(NotPlanet* np: this->satellites){
-        np->updateRecursive(dt, orbital_matrix);
+        np->update(dt);
+
+        np->orbital_matrix = glm::translate(glm::mat4(1.f),
+            glm::vec3(np->orbital_radius * cos(np->orbital_phi),
+            0.f,
+            np->orbital_radius * sin(np->orbital_phi)));
+
+        np->orbital_matrix = this->orbital_matrix * np->orbital_matrix;
+
+        np->orbital_phi -= np->orbital_omega * dt;
+        if(np->orbital_phi > 2*M_PI){
+            np->orbital_phi -= 2*M_PI;
+        }
+        else if(np->orbital_phi < 0){
+            np->orbital_phi += 2*M_PI;
+        }
     }
 
-    this->matrix = glm::scale(orbital_matrix * rotation_matrix,
+    this->matrix = glm::scale(this->orbital_matrix * rotation_matrix,
     glm::vec3(this->self_radius, this->self_radius, this->self_radius));
-
-    //this->normal_matrix = glm::rotate(this->normal_matrix, glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 NotSolarSystem::NotSolarSystem():
@@ -88,16 +77,14 @@ NotSolarSystem::~NotSolarSystem(){
 }
 
 void NotSolarSystem::update(double dt){
-    this->sun->updateRecursive(dt);
+    //this->sun->updateRecursive(dt);
+    this->sun->update(dt);
 }
 
-void NotSolarSystem::render(
-        const glm::mat4& M,
-        const glm::mat4& V,
-        const glm::mat4& P)const{
+void NotSolarSystem::render(const glm::mat4& MVP)const{
     
     for(const NotPlanet* np:this->not_planets){
-        np->render(M,V,P);
+        np->render(MVP);
     }
 }
 

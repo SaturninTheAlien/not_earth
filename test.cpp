@@ -111,7 +111,7 @@ int main(int argc, char**argv){
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-		ns->objects3D[selected_object_id]->render(M,V,P,N);
+		ns->objects3D[selected_object_id]->render(P*V*M,N, lightPosition);
 		
 		glfwSwapBuffers(window);
 	}

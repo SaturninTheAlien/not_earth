@@ -79,9 +79,9 @@ int main(int argc, char**argv){
 
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
-        glm::vec3(0,0,20), // Camera is at (4,3,3), in World Space
+        glm::vec3(0,20,0), // Camera is at (4,3,3), in World Space
         glm::vec3(0,0,0), // and looks at the origin
-        glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+        glm::vec3(1,0,0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
     M = glm::mat4(1.0f);
 
@@ -111,7 +111,7 @@ int main(int argc, char**argv){
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-        ns->render(M,V,P);
+        ns->render(P*V*M);
 
 		glfwSwapBuffers(window);
     }
