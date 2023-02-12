@@ -13,7 +13,7 @@ public:
         const glm::mat4& M,
         const glm::mat4& V,
         const glm::mat4& P,
-        const glm::vec3& lightPosition
+        const glm::mat4& N
         )const = 0;
 };
 
@@ -25,17 +25,18 @@ public:
         const glm::mat4& M,
         const glm::mat4& V,
         const glm::mat4& P,
-        const glm::vec3& lightPosition
+        const glm::mat4& N
         )const;
 private:
     const Model & sphere_model;
     unsigned int texture = 0;
     unsigned int texture_normal = 0;
     int shader=0;
-    int shader_light_position_id = -1;
     int shader_M_id=-1;
     int shader_V_id=-1;
     int shader_P_id=-1;
+    int shader_N_id=-1;
+
     int shader_image_id=-1;
     int shader_image_normal_id=-1;
 };
@@ -49,7 +50,7 @@ public:
         const glm::mat4& M,
         const glm::mat4& V,
         const glm::mat4& P,
-        const glm::vec3& lightPosition
+        const glm::mat4& N
         )const;
 protected:
     const Model & sphere_model;
@@ -58,15 +59,16 @@ protected:
     unsigned int texture_night = 0;
     unsigned int texture_spec = 0;
     int shader=0;
-    int shader_light_position_id = -1;
+    
     int shader_M_id=-1;
     int shader_V_id=-1;
     int shader_P_id=-1;
+    int shader_N_id=-1;
+
     int shader_image_id=-1;
     int shader_image_night_id=-1;
     int shader_image_spec_id=-1;
     int shader_image_normal_id=-1;
-    int shader_light_dir_id = -1;
 };
 
 
@@ -77,7 +79,7 @@ public:
         const glm::mat4& M,
         const glm::mat4& V,
         const glm::mat4& P,
-        const glm::vec3& lightPosition
+        const glm::mat4& N
         )const;
 
 private:
@@ -94,7 +96,7 @@ public:
         const glm::mat4& M,
         const glm::mat4& V,
         const glm::mat4& P,
-        const glm::vec3& lightPosition
+        const glm::mat4& N
         )const;
 
 private:

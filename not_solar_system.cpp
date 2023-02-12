@@ -34,8 +34,10 @@ void NotPlanet::updateRecursive(double dt, const glm::mat4& parent_orbital_matri
             glm::vec3(this->orbital_radius * cos(this->orbital_phi),
             0.f,
             this->orbital_radius * sin(this->orbital_phi)));
-
+          
         orbital_matrix = parent_orbital_matrix * orbital_matrix;
+
+        this->light_matrix = glm::rotate(glm::mat4(1.0f), float(this->orbital_phi), glm::vec3(0.0f, 1.0f, 0.0f));  
     }
 
     for(NotPlanet* np: this->satellites){
@@ -44,6 +46,8 @@ void NotPlanet::updateRecursive(double dt, const glm::mat4& parent_orbital_matri
 
     this->matrix = glm::scale(orbital_matrix * rotation_matrix,
     glm::vec3(this->self_radius, this->self_radius, this->self_radius));
+
+    //this->normal_matrix = glm::rotate(this->normal_matrix, glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 NotSolarSystem::NotSolarSystem():

@@ -69,15 +69,16 @@ int main(int argc, char**argv){
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    glm::mat4 V, P;
+    glm::mat4 V, P, N;
 
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
-        glm::vec3(4,0,0), // Camera is at (4,3,3), in World Space
+        glm::vec3(0,0,4), // Camera is at (4,3,3), in World Space
         glm::vec3(0,0,0), // and looks at the origin
         glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
     M = glm::mat4(1.0f);
+    N = glm::mat4(1.0f);
 
     glm::vec3 lightPosition = glm::vec3(100.f, 10.f, 100.f);
     ns = new NotSolarSystem();
@@ -88,13 +89,6 @@ int main(int argc, char**argv){
 
         glfwPollEvents();		
 
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
-        }
-        else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
-            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 0.0f, 1.0f))*M;
-        }
-
         if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
         }
@@ -102,19 +96,22 @@ int main(int argc, char**argv){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*M;
         }
 
-        if(glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS){
-            glm::mat4 RM = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
+        }
 
-            glm::vec4 v = glm::vec4(lightPosition.x, lightPosition.y, lightPosition.z, 1);
-            v = RM * v;
+        else if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS){
+            M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
+        }
 
-            lightPosition = glm::vec3(v.x, v.y, v.z);            
+        if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS){
+            N = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(0.0f, 1.0f, 0.0f))*N;       
         }
 
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);
 
-		ns->objects3D[selected_object_id]->render(M,V,P, lightPosition);
+		ns->objects3D[selected_object_id]->render(M,V,P,N);
 		
 		glfwSwapBuffers(window);
 	}

@@ -18,7 +18,7 @@ public:
         const glm::mat4& V,
         const glm::mat4& P)const{
 
-        this->object3D->render(M * this->matrix, V, P, this->lightPosition);
+        this->object3D->render(M * this->matrix, V, P,this->matrix * this->light_matrix);
     }
 
     void updateRecursive(double dt, const glm::mat4& parent_orbital_matrix=glm::mat4(1.f));
@@ -36,8 +36,8 @@ public:
     }
 
 private:
-    glm::vec3 lightPosition = glm::vec3(100.f, 10.f, 100.f);
     glm::mat4 matrix;
+    glm::mat4 light_matrix = glm::mat4(1.f);
     Object3D* object3D;
     friend class NotSolarSystem;
 };

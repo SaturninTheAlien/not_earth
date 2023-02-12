@@ -10,24 +10,25 @@ sphere_model(sphere_model){
     this->shader = compileShader(readFile("shaders/moon.vert.glsl"),
     readFile("shaders/moon.frag.glsl"));
 
-    this->shader_light_position_id = getUniformID(shader, "lightPosition");
-
     this->shader_M_id = getUniformID(shader, "M");
     this->shader_V_id = getUniformID(shader, "V");
     this->shader_P_id = getUniformID(shader, "P");
+    this->shader_N_id= getUniformID(shader, "N");
 
     this->shader_image_id = getUniformID(shader, "image");
     this->shader_image_normal_id = getUniformID(shader, "image_normals");
 }
 
-void Moon::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::vec3& lightPosition)const{
+void Moon::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::mat4& N)const{
     glUseProgram(this->shader);
 
-    glUniform3f(this->shader_light_position_id, lightPosition.x, lightPosition.y, lightPosition.z);
+    //glUniform3f(this->shader_light_position_id, lightPosition.x, lightPosition.y, lightPosition.z);
 
     glUniformMatrix4fv(this->shader_M_id, 1, GL_FALSE, &M[0][0]);
     glUniformMatrix4fv(this->shader_V_id, 1, GL_FALSE, &V[0][0]);
     glUniformMatrix4fv(this->shader_P_id, 1, GL_FALSE, &P[0][0]);
+    glUniformMatrix4fv(this->shader_N_id, 1, GL_FALSE, &N[0][0]);
+
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->texture);
@@ -52,27 +53,26 @@ sphere_model(sphere_model){
     this->shader = compileShader(readFile("shaders/moon.vert.glsl"),
     readFile("shaders/earth.frag.glsl"));
 
-    this->shader_light_position_id = getUniformID(shader, "lightPosition");
-
     this->shader_M_id = getUniformID(shader, "M");
     this->shader_V_id = getUniformID(shader, "V");
     this->shader_P_id = getUniformID(shader, "P");
+    this->shader_N_id= getUniformID(shader, "N");
 
     this->shader_image_id = getUniformID(shader, "image");
     this->shader_image_night_id = getUniformID(shader, "image_night");
     this->shader_image_spec_id = getUniformID(shader, "image_spec");
-    //this->shader_image_normal_id = getUniformID(shader, "image_normals");
 }
 
 
-void Earth::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::vec3& lightPosition)const{
+void Earth::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::mat4& N)const{
     glUseProgram(this->shader);
 
-    glUniform3f(this->shader_light_position_id, lightPosition.x, lightPosition.y, lightPosition.z);
+    //glUniform3f(this->shader_light_position_id, lightPosition.x, lightPosition.y, lightPosition.z);
 
     glUniformMatrix4fv(this->shader_M_id, 1, GL_FALSE, &M[0][0]);
     glUniformMatrix4fv(this->shader_V_id, 1, GL_FALSE, &V[0][0]);
     glUniformMatrix4fv(this->shader_P_id, 1, GL_FALSE, &P[0][0]);
+    glUniformMatrix4fv(this->shader_N_id, 1, GL_FALSE, &N[0][0]);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, this->texture);
@@ -102,7 +102,7 @@ model("models/ksienrzyc.obj", true){
     this->shader_texture_id = getUniformID(shader, "image");*/
 }
 
-void Ksienrzyc::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::vec3& lightPosition)const{
+void Ksienrzyc::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::mat4& N)const{
     glm::mat4 MVP = P * V * M;
 
     this->shader.use(MVP, this->texture);
@@ -114,7 +114,7 @@ sphere_model(sphere_model), shader(shader){
     texture = load_texture("textures/2k_sun.jpg");
 }
 
-void Sun::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::vec3& lightPosition)const{
+void Sun::render(const glm::mat4& M, const glm::mat4& V, const glm::mat4& P, const glm::mat4& N)const{
 
     glm::mat4 MVP = P * V * M;
 
