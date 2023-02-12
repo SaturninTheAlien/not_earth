@@ -5,7 +5,7 @@ Moon::Moon(const Model& sphere_model):
 sphere_model(sphere_model){
 
     this->texture = load_texture("textures/moon.jpg");
-    this->texture_normal = load_texture("textures/moon_normal.jpg");
+    //this->texture_normal = load_texture("textures/moon_normal.jpg");
 
     this->shader = compileShader(readFile("shaders/moon.vert.glsl"),
     readFile("shaders/moon.frag.glsl"));
@@ -15,7 +15,7 @@ sphere_model(sphere_model){
     this->shader_light_position_id = getUniformID(shader, "lightPosition");
 
     this->shader_image_id = getUniformID(shader, "image");
-    this->shader_image_normal_id = getUniformID(shader, "image_normals");
+    //this->shader_image_normal_id = getUniformID(shader, "image_normals");
 }
 
 void Moon::render(const glm::mat4& MVP, const glm::mat4& N, const glm::vec3& lightPosition)const{
@@ -30,9 +30,9 @@ void Moon::render(const glm::mat4& MVP, const glm::mat4& N, const glm::vec3& lig
     glBindTexture(GL_TEXTURE_2D, this->texture);
     glUniform1i(this->shader_image_id, 0);
 
-    glActiveTexture(GL_TEXTURE1);
+    /*glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, this->texture_normal);
-    glUniform1i(this->shader_image_normal_id, 1);
+    glUniform1i(this->shader_image_normal_id, 1);*/
 
     this->sphere_model.draw();
 }
@@ -42,7 +42,7 @@ Earth::Earth(const Model& sphere_model):
 sphere_model(sphere_model){
 
     this->texture = load_texture("textures/2k_earth_daymap.jpg");
-    this->texture_normal = load_texture("textures/2k_earth_normal_map.tif");
+    //this->texture_normal = load_texture("textures/2k_earth_normal_map.tif");
     this->texture_night = load_texture("textures/2k_earth_nightmap.jpg");
     this->texture_spec = load_texture("textures/2k_earth_specular_map.tif");
 

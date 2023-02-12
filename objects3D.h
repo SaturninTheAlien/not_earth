@@ -29,13 +29,13 @@ public:
 private:
     const Model & sphere_model;
     unsigned int texture = 0;
-    unsigned int texture_normal = 0;
+    //unsigned int texture_normal = 0;
     int shader=0;
     int shader_MVP_id=-1;
     int shader_N_id=-1;
 
     int shader_image_id=-1;
-    int shader_image_normal_id=-1;
+    //int shader_image_normal_id=-1;
     int shader_light_position_id = -1;
 };
 
