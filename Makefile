@@ -13,8 +13,10 @@ endif
 common_objects = utils.o shader.o model.o model_loader.o texture.o objects3D.o not_solar_system.o controls.o
 headers1 = utils.h shader.h model.h model_loader.h texture.h
 
-all: $(common_objects) main.o
+not_earth: $(common_objects) main.o
 	c++ main.o $(common_objects) $(LDFLAGS) -o not_earth.x
+
+all: not_earth test
 
 test: $(common_objects) test.o
 	c++ test.o $(common_objects) $(LDFLAGS) -o test.x
@@ -55,6 +57,6 @@ clean:
 clean_shit:
 	rm -f *.o
 
-.PHONY: not_earth test clean clean_shit
+.PHONY: not_earth test all clean clean_shit
 
 

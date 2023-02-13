@@ -135,7 +135,10 @@ void fix_ksienrzyc_model(std::vector<glm::vec3>& vertices){
 		vertex.z = t;
 	}
 }
-
+/**
+ * Algorithm from site:
+ * http://www.songho.ca/opengl/gl_sphere.html
+ */
 
 void createSphere(std::vector<unsigned short> & indices,
 std::vector<glm::vec3>&vertices,

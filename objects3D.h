@@ -6,6 +6,9 @@
 #include "utils.h"
 
 
+//#define USE_NORMALS_TEXTURES
+
+
 class Object3D{
 public:
     virtual ~Object3D(){}
@@ -29,16 +32,19 @@ public:
 private:
     const Model & sphere_model;
     unsigned int texture = 0;
-    //unsigned int texture_normal = 0;
+
     int shader=0;
     int shader_MVP_id=-1;
     int shader_N_id=-1;
 
     int shader_image_id=-1;
-    //int shader_image_normal_id=-1;
     int shader_light_position_id = -1;
-};
 
+#ifdef USE_NORMALS_TEXTURES
+    unsigned int texture_normal = 0;
+    int shader_image_normal_id=-1;
+#endif
+};
 
 class Earth: public Object3D{
 public:
@@ -53,7 +59,6 @@ public:
 protected:
     const Model & sphere_model;
     unsigned int texture = 0;
-    unsigned int texture_normal = 0;
     unsigned int texture_night = 0;
     unsigned int texture_spec = 0;
     int shader=0;
@@ -65,7 +70,11 @@ protected:
     int shader_image_id=-1;
     int shader_image_night_id=-1;
     int shader_image_spec_id=-1;
+
+#ifdef USE_NORMALS_TEXTURES
+    unsigned int texture_normal = 0;
     int shader_image_normal_id=-1;
+#endif
 };
 
 
