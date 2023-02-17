@@ -15,7 +15,7 @@ unsigned int compileShader(const std::string& vs, const std::string & fs){
     glShaderSource(vertexShader, 1, &vs_c, nullptr);
     glCompileShader(vertexShader);
     // check for shader compile errors
-    int success;
+    int success = 0;
     char infoLog[512];
     glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
     if (!success){
