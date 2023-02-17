@@ -21,11 +21,17 @@ all: not_earth test
 test: $(common_objects) test.o
 	c++ test.o $(common_objects) $(LDFLAGS) -o test.x
 
+test3: $(common_objects) test3.o
+	c++ test3.o $(common_objects) $(LDFLAGS) -o test3.x 
+
 main.o: main.cpp *.h
 	c++ $(CFLAGS) main.cpp -c -o main.o
 
 test.o: test.cpp *.h
 	c++ $(CFLAGS) test.cpp -c -o test.o
+
+test3.o: test3.cpp *.h
+	c++ $(CFLAGS) test3.cpp -c -o test3.o
 
 controls.o: controls.cpp controls.h
 	c++ $(CFLAGS) controls.cpp -c -o controls.o
