@@ -17,13 +17,14 @@ Zatem zamiast modelu Układu Słonecznego zdecydowałem się zrobić sztukę now
 - python3-pillow
 - python3-pil
 
-## Kompilacja i uruchomienie
+## Kompilacja
 > make
 
+## Uruchomienie
 > ./not_earth.x
 
 ## Sterowanie
-Można obracać myszką po wciśnięciu kilknięciuś kółka (jak w Blender3D).
+Można obracać myszką po wciśnięciu kółka (jak w Blender3D).
 
 Klawiatura:
 1. "z" - obraca widok tak, że kieruje oś "z" w kierunku obserwatora, podobnie "x" i "y",
