@@ -43,28 +43,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
         else if(key == GLFW_KEY_Z){
-            V = glm::lookAt(
-                glm::vec3(0,0,viewRadius), // Camera is at (4,3,3), in World Space
-                glm::vec3(0,0,0), // and looks at the origin
-                glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-            );
             M = glm::mat4(1.0f);
         }
         else if(key == GLFW_KEY_X){
-            V = glm::lookAt(
-                glm::vec3(viewRadius,0,0), // Camera is at (4,3,3), in World Space
-                glm::vec3(0,0,0), // and looks at the origin
-                glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-            );
-            M = glm::mat4(1.0f);            
+            M = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(0.f, 1.f, 0.f));
         }
         else if(key == GLFW_KEY_Y){
-            V = glm::lookAt(
-                glm::vec3(0,viewRadius,0), // Camera is at (4,3,3), in World Space
-                glm::vec3(0,0,0), // and looks at the origin
-                glm::vec3(1,0,0)  // Head is up (set to 0,-1,0 to look upside-down)
-            );
-            M = glm::mat4(1.0f); 
+            M = glm::rotate(glm::mat4(1.f), glm::radians(90.f), glm::vec3(1.f, 0.f, 0.f));
         }
         else if(key == GLFW_KEY_M){
             ns->xD();

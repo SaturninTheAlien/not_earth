@@ -64,9 +64,20 @@ sphere_model(sphere_model){
 
     this->shader_image_normal_id = getUniformID(shader, "image_normal");
 #else
+
+#ifdef USE_EARTH_WITH_CLOUDS
+    this->texture_clouds = load_texture("textures/2k_earth_clouds.jpg");
+    this->shader = compileShader(readFile("shaders/moon.vert.glsl"),
+    readFile("shaders/earth_clouds.frag.glsl"));
+    this->shader_image_clouds_id = getUniformID(shader, "image_clouds");
+
+#else
     this->shader = compileShader(readFile("shaders/moon.vert.glsl"),
     readFile("shaders/earth.frag.glsl"));
 #endif
+
+#endif
+
     this->shader_MVP_id = getUniformID(shader, "MVP");
     this->shader_N_id= getUniformID(shader, "N");
     this->shader_light_position_id = getUniformID(shader, "lightPosition");
@@ -102,6 +113,12 @@ void Earth::render(const glm::mat4& MVP, const glm::mat4& N, const glm::vec3& li
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, this->texture_night);
     glUniform1i(this->shader_image_night_id, 3);
+
+#ifdef USE_EARTH_WITH_CLOUDS
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, this->texture_clouds);
+    glUniform1i(this->shader_image_clouds_id, 4);
+#endif
 
     this->sphere_model.draw();
 }

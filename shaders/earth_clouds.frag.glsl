@@ -2,18 +2,15 @@
 out vec3 vFragColor;
 
 uniform sampler2D image;
-//uniform sampler2D image_normals;
 uniform sampler2D image_spec;
 uniform sampler2D image_night;
+uniform sampler2D image_clouds;
 
 in vec3 fNormal;
 in vec3 fLightDir;
 in vec2 fUV;
 
 void main() {
-
-	//vec3 normal1 = fNormal + texture( image_normals, fUV).rgb;
-
     vec3 normal1 = fNormal;
 
 	vec3 diffuseColor = texture( image, fUV ).rgb;
@@ -36,6 +33,12 @@ void main() {
             color += vec3(fSpec,fSpec,fSpec);
         }
     }
+
+    vec3 cloudsColor = diff * vec3(1.f,1.f,1.f);
+
+    float cloudsIntensity = texture( image_clouds, fUV).r;
+
+    color = cloudsIntensity * cloudsColor + (1.f - cloudsIntensity) * color;
 
 	vFragColor.r=min(1.0f,color.r);
 	vFragColor.g=min(1.0f,color.g);

@@ -6,7 +6,7 @@
 #include "utils.h"
 
 
-//#define USE_NORMALS_TEXTURES
+#define USE_EARTH_WITH_CLOUDS
 
 
 class Object3D{
@@ -44,6 +44,7 @@ private:
     unsigned int texture_normal = 0;
     int shader_image_normal_id=-1;
 #endif
+
 };
 
 class Earth: public Object3D{
@@ -75,6 +76,12 @@ protected:
     unsigned int texture_normal = 0;
     int shader_image_normal_id=-1;
 #endif
+
+#ifdef USE_EARTH_WITH_CLOUDS
+    unsigned int texture_clouds = 0;
+    int shader_image_clouds_id = -1;
+#endif
+
 };
 
 
