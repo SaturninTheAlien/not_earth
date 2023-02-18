@@ -12,6 +12,8 @@
 
 #include "not_solar_system.h"
 #include "compass_rose.h"
+#include "skybox.h"
+
 
 namespace py = pybind11;
 
@@ -51,7 +53,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             V = glm::lookAt(
                 glm::vec3(20,0,0), // Camera is at (4,3,3), in World Space
                 glm::vec3(0,0,0), // and looks at the origin
-                glm::vec3(0,0,1)  // Head is up (set to 0,-1,0 to look upside-down)
+                glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
             );
             M = glm::mat4(1.0f);            
         }
@@ -137,7 +139,6 @@ int main(int argc, char**argv){
 
 
     glEnable(GL_TEXTURE_2D);
-    glEnable (GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
@@ -152,6 +153,7 @@ int main(int argc, char**argv){
     ns = new NotSolarSystem();
 
     CompassRose * cr = new CompassRose();
+    Skybox * sb = new Skybox();
 
     glfwSetKeyCallback(window, key_callback);
     glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -192,19 +194,27 @@ int main(int argc, char**argv){
 
         glm::mat4 MVP = P*V*M;
 
+        {
+            glm::mat4 MVP_SB = glm::scale(MVP, glm::vec3(20.f, 20.f, 20.f));
+            sb->render(MVP_SB);
+        }
+
+        glEnable(GL_DEPTH_TEST);
         ns -> render(MVP);
+        glDisable(GL_DEPTH_TEST);
 
         if(shouldRenderCompassRose){
             glClear(GL_DEPTH_BUFFER_BIT);
             glm::mat4 MVP_CR = glm::translate(glm::mat4(1.f), glm::vec3(0.75f, -0.75f, 0.f)) * MVP;
             cr -> render(MVP_CR);
         }
-
+        
 		glfwSwapBuffers(window);
     }
 
     delete cr;
     delete ns;
+    delete sb;
 
     glfwTerminate();
 

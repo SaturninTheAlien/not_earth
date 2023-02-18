@@ -20,7 +20,7 @@ Zatem zamiast modelu Układu Słonecznego zdecydowałem się zrobić sztukę now
 ## Kompilacja
 > make
 
-## Uuchomienie
+## Uruchomienie
 > ./not_earth.x
 
 ## Sterowanie

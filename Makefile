@@ -10,7 +10,7 @@ else
 
 endif
 
-common_objects = utils.o shader.o model.o model_loader.o texture.o objects3D.o not_solar_system.o controls.o compass_rose.o
+common_objects = utils.o shader.o model.o model_loader.o texture.o objects3D.o not_solar_system.o skybox.o compass_rose.o
 headers1 = utils.h shader.h model.h model_loader.h texture.h
 
 not_earth: $(common_objects) main.o
@@ -36,8 +36,6 @@ test.o: test.cpp *.h
 test3.o: test3.cpp *.h
 	c++ $(CFLAGS) test3.cpp -c -o test3.o
 
-controls.o: controls.cpp controls.h
-	c++ $(CFLAGS) controls.cpp -c -o controls.o
 
 utils.o: utils.h utils.cpp
 	c++ $(CFLAGS) utils.cpp -c -o utils.o
@@ -62,6 +60,9 @@ objects3D.o: objects3D.cpp objects3D.h $(headers1)
 
 compass_rose.o: compass_rose.cpp compass_rose.h $(headers1)
 	c++ $(CFLAGS) compass_rose.cpp -c -o compass_rose.o
+
+skybox.o: skybox.cpp skybox.h $(headers1)
+	c++ $(CFLAGS) skybox.cpp -c -o skybox.o
 
 clean:
 	rm -f *.x *.o
