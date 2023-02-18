@@ -14,9 +14,7 @@
 #include "compass_rose.h"
 #include "skybox.h"
 
-
 namespace py = pybind11;
-
 
 double dt = 1./8;
 glm::mat4 M, V, P;
@@ -25,6 +23,9 @@ bool shouldRenderCompassRose = true;
 
 bool shouldRotateWithMousePos = false;
 glm::vec2 prevMousePos(0.f,0.f);
+
+float viewRadius = 40.f;
+
 
 glm::vec2 getRelativeMouseCursorPos(GLFWwindow* window){
     int width = 0, height = 0;
@@ -43,7 +44,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         else if(key == GLFW_KEY_Z){
             V = glm::lookAt(
-                glm::vec3(0,0,20), // Camera is at (4,3,3), in World Space
+                glm::vec3(0,0,viewRadius), // Camera is at (4,3,3), in World Space
                 glm::vec3(0,0,0), // and looks at the origin
                 glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
             );
@@ -51,7 +52,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         else if(key == GLFW_KEY_X){
             V = glm::lookAt(
-                glm::vec3(20,0,0), // Camera is at (4,3,3), in World Space
+                glm::vec3(viewRadius,0,0), // Camera is at (4,3,3), in World Space
                 glm::vec3(0,0,0), // and looks at the origin
                 glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
             );
@@ -59,7 +60,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         }
         else if(key == GLFW_KEY_Y){
             V = glm::lookAt(
-                glm::vec3(0,20,0), // Camera is at (4,3,3), in World Space
+                glm::vec3(0,viewRadius,0), // Camera is at (4,3,3), in World Space
                 glm::vec3(0,0,0), // and looks at the origin
                 glm::vec3(1,0,0)  // Head is up (set to 0,-1,0 to look upside-down)
             );
@@ -144,7 +145,7 @@ int main(int argc, char**argv){
 
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
-        glm::vec3(0,0,20), // Camera is at (4,3,3), in World Space
+        glm::vec3(0,0,viewRadius), // Camera is at (4,3,3), in World Space
         glm::vec3(0,0,0), // and looks at the origin
         glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
     );
@@ -195,7 +196,7 @@ int main(int argc, char**argv){
         glm::mat4 MVP = P*V*M;
 
         {
-            glm::mat4 MVP_SB = glm::scale(MVP, glm::vec3(20.f, 20.f, 20.f));
+            glm::mat4 MVP_SB = glm::scale(MVP, glm::vec3(viewRadius, viewRadius, viewRadius));
             sb->render(MVP_SB);
         }
 
@@ -205,7 +206,10 @@ int main(int argc, char**argv){
 
         if(shouldRenderCompassRose){
             glClear(GL_DEPTH_BUFFER_BIT);
-            glm::mat4 MVP_CR = glm::translate(glm::mat4(1.f), glm::vec3(0.75f, -0.75f, 0.f)) * MVP;
+
+            float cr_size = 2;
+            glm::mat4 MVP_CR = glm::scale(MVP, glm::vec3(cr_size, cr_size, cr_size));
+            MVP_CR = glm::translate(glm::mat4(1.f), glm::vec3(0.75f, -0.75f, 0.f)) * MVP_CR;
             cr -> render(MVP_CR);
         }
         

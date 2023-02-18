@@ -16,6 +16,8 @@ void NotPlanet::update(double dt){
         this->self_phi += 2*M_PI;
     }
 
+    glm::mat4 axial_tilt_matrix = glm::rotate(glm::mat4(1.f), float(glm::radians(axial_tilt)), glm::vec3(0.f,0.f,1.f));
+
     for(NotPlanet* np: this->satellites){
         np->update(dt);
 
@@ -35,7 +37,7 @@ void NotPlanet::update(double dt){
         }
     }
 
-    this->matrix = glm::scale(this->orbital_matrix * rotation_matrix,
+    this->matrix = glm::scale(this->orbital_matrix * axial_tilt_matrix * rotation_matrix,
     glm::vec3(this->self_radius, this->self_radius, this->self_radius));
 }
 
@@ -47,9 +49,9 @@ sphere(){
     this->objects3D.push_back(new Moon(this->sphere));
     this->objects3D.push_back(new Ksienrzyc(this->simpleTextureShader));
 
-    this->sun = new NotPlanet(this->objects3D[0], 0,  0, 0);
-    NotPlanet* earth = new NotPlanet(this->objects3D[1], 1./10 , 5, 1./365.25);
-    this->moon = new NotPlanet(NotPlanet(this->objects3D[2], 1./27.3, 2, 1./27.3, 0.2731));
+    this->sun = new NotPlanet(this->objects3D[0], 0,  0, 0, 3);
+    NotPlanet* earth = new NotPlanet(this->objects3D[1], 1./10 , 15, 1./365.25, 1, 23.44);
+    this->moon = new NotPlanet(NotPlanet(this->objects3D[2], 1./27.3, 2, 1./27.3, 0.2731, 6.687));
     
 
     sun->satellites.emplace_back(earth);

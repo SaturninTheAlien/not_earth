@@ -10,9 +10,14 @@
 
 class NotPlanet{
 public:
-    NotPlanet(Object3D* object3D, double self_omega, double orbital_radius, double orbital_omega, double self_radius=1):
-    object3D(object3D), self_omega(self_omega), orbital_radius(orbital_radius), orbital_omega(orbital_omega), self_radius(self_radius){
-
+    NotPlanet(Object3D* object3D, double self_omega, double orbital_radius,
+    double orbital_omega, double self_radius=1, double axial_tilt=0):
+    object3D(object3D),
+    self_omega(self_omega),
+    orbital_radius(orbital_radius),
+    orbital_omega(orbital_omega),
+    self_radius(self_radius),
+    axial_tilt(axial_tilt){
     }
 
     void render(const glm::mat4& MVP)const{
@@ -21,6 +26,8 @@ public:
     void update(double dt);
 
     std::vector<NotPlanet*>satellites;
+
+    double axial_tilt = 0;
     double self_phi = M_PI;
     double self_omega = 0;
     double self_radius = 1;
