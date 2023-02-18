@@ -17,10 +17,22 @@ namespace py = pybind11;
 
 
 double dt = 1./8;
-glm::mat4 M;
+glm::mat4 M, V, P;
 NotSolarSystem * ns;
 bool shouldRenderCompassRose = true;
 
+bool shouldRotateWithMousePos = false;
+glm::vec2 prevMousePos(0.f,0.f);
+
+glm::vec2 getRelativeMouseCursorPos(GLFWwindow* window){
+    int width = 0, height = 0;
+    glfwGetWindowSize(window, &width, &height);
+
+    double xpos=0, ypos=0;
+    glfwGetCursorPos(window, &xpos, &ypos);
+
+    return glm::vec2(xpos/width, ypos/height);
+}
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
     if(action == GLFW_PRESS){
@@ -28,8 +40,31 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
         else if(key == GLFW_KEY_Z){
+            V = glm::lookAt(
+                glm::vec3(0,0,20), // Camera is at (4,3,3), in World Space
+                glm::vec3(0,0,0), // and looks at the origin
+                glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+            );
             M = glm::mat4(1.0f);
-            dt = 1./8;
+        }
+        else if(key == GLFW_KEY_X){
+            V = glm::lookAt(
+                glm::vec3(20,0,0), // Camera is at (4,3,3), in World Space
+                glm::vec3(0,0,0), // and looks at the origin
+                glm::vec3(0,0,1)  // Head is up (set to 0,-1,0 to look upside-down)
+            );
+            M = glm::mat4(1.0f);            
+        }
+        else if(key == GLFW_KEY_Y){
+            V = glm::lookAt(
+                glm::vec3(0,20,0), // Camera is at (4,3,3), in World Space
+                glm::vec3(0,0,0), // and looks at the origin
+                glm::vec3(1,0,0)  // Head is up (set to 0,-1,0 to look upside-down)
+            );
+            M = glm::mat4(1.0f); 
+        }
+        else if(key == GLFW_KEY_M){
+            ns->xD();
         }
         else if(key == GLFW_KEY_R){
             shouldRenderCompassRose = !shouldRenderCompassRose;
@@ -40,12 +75,38 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         else if(key == GLFW_KEY_S){
             dt /= 2;
         }
-        else if(key == GLFW_KEY_O){
-            ns->xD();
+    }
+}
+
+
+void mouse_button_callback(GLFWwindow* window, int button, int action, int mods){
+
+    if(button == GLFW_MOUSE_BUTTON_MIDDLE){
+        if(action == GLFW_PRESS){
+            shouldRotateWithMousePos = true;
+            prevMousePos = getRelativeMouseCursorPos(window);
+        }
+        else if(action == GLFW_RELEASE){
+            shouldRotateWithMousePos = false;
         }
     }
 }
+
+
 int main(int argc, char**argv){
+
+    {
+        int i = 1;
+        while(i<argc){
+            std::string arg(argv[i]);
+            if(arg=="-h" || arg=="--help"){
+                std::cout<<"\"Not Earth\" art installation."<<std::endl;
+                std::cout<<"For more details and controls open README file."<<std::endl;
+                return 0;
+            }
+            ++i;
+        }
+    }
 
     py::scoped_interpreter guard{};
 
@@ -80,8 +141,6 @@ int main(int argc, char**argv){
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
-    glm::mat4 V, P;
-
     P = glm::perspective(glm::radians(45.0f), 4.0f / 3.0f, 0.1f, 100.0f);
     V = glm::lookAt(
         glm::vec3(0,0,20), // Camera is at (4,3,3), in World Space
@@ -95,6 +154,7 @@ int main(int argc, char**argv){
     CompassRose * cr = new CompassRose();
 
     glfwSetKeyCallback(window, key_callback);
+    glfwSetMouseButtonCallback(window, mouse_button_callback);
 
     while(glfwWindowShouldClose(window) == 0 ){
         glfwPollEvents();
@@ -113,7 +173,19 @@ int main(int argc, char**argv){
             M = glm::rotate(glm::mat4(1.0f), glm::radians(-1.0f), glm::vec3(1.0f, 0.0f, 0.0f))*M;
         }
 
-        ns->update(dt);        
+        ns->update(dt);
+
+        if(shouldRotateWithMousePos){
+            glm::vec2 mousePos = getRelativeMouseCursorPos(window);
+            if(mousePos!=prevMousePos){
+                glm::vec2 rotationVec = mousePos - prevMousePos;
+                prevMousePos = mousePos;
+
+                M = glm::rotate(glm::mat4(1.0f),
+                float(M_PI * glm::length(rotationVec)),
+                glm::vec3(rotationVec.y, rotationVec.x, 0)) * M;
+            }
+        }       
 
         glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glClearColor(0,0,0.25, 1);

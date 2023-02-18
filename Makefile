@@ -16,6 +16,9 @@ headers1 = utils.h shader.h model.h model_loader.h texture.h
 not_earth: $(common_objects) main.o
 	c++ main.o $(common_objects) $(LDFLAGS) -o not_earth.x
 
+run: not_earth
+	./not_earth.x
+
 all: not_earth test test3
 
 test: $(common_objects) test.o
@@ -66,6 +69,6 @@ clean:
 clean_shit:
 	rm -f *.o
 
-.PHONY: not_earth test all clean clean_shit
+.PHONY: not_earth test test3 run all clean clean_shit
 
 

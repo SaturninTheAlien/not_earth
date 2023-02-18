@@ -47,7 +47,7 @@ sphere(){
     this->objects3D.push_back(new Moon(this->sphere));
     this->objects3D.push_back(new Ksienrzyc(this->simpleTextureShader));
 
-    this->sun = new NotPlanet(this->objects3D[0], 1./20,  0, 0);
+    this->sun = new NotPlanet(this->objects3D[0], 0,  0, 0);
     NotPlanet* earth = new NotPlanet(this->objects3D[1], 1./10 , 5, 1./365.25);
     this->moon = new NotPlanet(NotPlanet(this->objects3D[2], 1./27.3, 2, 1./27.3, 0.2731));
     
