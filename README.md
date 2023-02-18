@@ -17,8 +17,10 @@ Zatem zamiast modelu Układu Słonecznego zdecydowałem się zrobić sztukę now
 - python3-pillow
 - python3-pil
 
-## Kompilacja i uruchomienie
+## Kompilacja
 > make
+
+## Uuchomienie
 > ./not_earth.x
 
 ## Sterowanie
