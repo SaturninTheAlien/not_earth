@@ -123,8 +123,6 @@ int main(int argc, char**argv){
         throw std::runtime_error(os.str());
     }
 
-
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
@@ -187,8 +185,6 @@ int main(int argc, char**argv){
 
         glEnable(GL_DEPTH_TEST);
         ns -> render(MVP);
-
-        glClear(GL_DEPTH_BUFFER_BIT);
         
         if(shouldRenderCompassRose){
             glClear(GL_DEPTH_BUFFER_BIT);
