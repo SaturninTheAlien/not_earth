@@ -187,8 +187,9 @@ int main(int argc, char**argv){
 
         glEnable(GL_DEPTH_TEST);
         ns -> render(MVP);
-        glDisable(GL_DEPTH_TEST);
 
+        glClear(GL_DEPTH_BUFFER_BIT);
+        
         if(shouldRenderCompassRose){
             glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -197,7 +198,8 @@ int main(int argc, char**argv){
             MVP_CR = glm::translate(glm::mat4(1.f), glm::vec3(0.75f, -0.75f, 0.f)) * MVP_CR;
             cr -> render(MVP_CR);
         }
-        
+        glDisable(GL_DEPTH_TEST);
+
 		glfwSwapBuffers(window);
     }
 
